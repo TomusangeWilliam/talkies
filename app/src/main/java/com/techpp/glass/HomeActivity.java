@@ -598,10 +598,10 @@ public class HomeActivity extends Activity {
 
     private void updateWeatherIcon() {
         weatherIcon.setVisibility(View.VISIBLE);
+        weatherIcon.setBackgroundResource(R.drawable.weather_icon_badge);
         int iconRes = getWeatherIcon(weatherLine);
         if (iconRes != 0) {
             weatherIcon.setImageResource(iconRes);
-            // No tint: allow the 3D gradient colors in each icon to show through.
             weatherIcon.setImageTintList(null);
         }
     }

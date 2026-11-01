@@ -5,12 +5,10 @@
     android:viewportWidth="48"
     android:viewportHeight="48">
 
-    <!-- Cloud shadow -->
     <path
-        android:pathData="M38,28c0,3.31 -2.69,6 -6,6H10c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C9.38,8.84 12.62,6 16.5,6c2.27,0 4.33,0.93 5.82,2.43C23.58,7.35 25.2,7 27,7c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L38,28Z"
-        android:fillColor="#1A000000"/>
+        android:pathData="M39,28c0,4.42 -3.58,8 -8,8H10c-5.52,0 -10,-4.48 -10,-10 0,-4.73 3.35,-8.71 7.82,-9.76C9.86,8.49 13.63,5 18.2,5c2.54,0 4.85,0.9 6.66,2.41C27.08,6.41 28.7,6 30.5,6c6.35,0 11.5,5.15 11.5,11.5 0,0.42 -0.03,0.83 -0.08,1.23 0.6,0.89 1.08,1.97 1.08,3.27Z"
+        android:fillColor="#29000000"/>
 
-    <!-- Cloud body with blue-grey tint (rain cloud) -->
     <path
         android:pathData="M37,26c0,3.31 -2.69,6 -6,6H9c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C8.38,6.84 11.62,4 15.5,4c2.27,0 4.33,0.93 5.82,2.43C22.58,5.35 24.2,5 26,5c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L37,26Z">
         <aapt:attr name="android:fillColor">
@@ -18,105 +16,67 @@
                 android:startX="9"
                 android:startY="4"
                 android:endX="37"
-                android:endY="26"
+                android:endY="32"
                 android:type="linear">
-                <item android:offset="0"   android:color="#FFE3EEF8"/>
-                <item android:offset="0.5" android:color="#FFBDD8EE"/>
-                <item android:offset="1.0" android:color="#FF78909C"/>
+                <item android:offset="0"   android:color="#FFF3FAFF"/>
+                <item android:offset="0.3" android:color="#FFB9D9FF"/>
+                <item android:offset="0.68" android:color="#FF89B7E3"/>
+                <item android:offset="1.0" android:color="#FF5B7284"/>
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Cloud highlight -->
-    <path
-        android:pathData="M12,8 Q16,5 21,7 Q16,7 14,10 Z"
-        android:fillColor="#88FFFFFF"/>
+    <path android:pathData="M12,8 Q17,5 22,7 Q17,7.5 14,12 Z" android:fillColor="#DBFFFFFF"/>
+    <path android:pathData="M9,31 Q21,35 34,30 Q31,38 22,40 H13 Q8,38 9,31 Z" android:fillColor="#23000000"/>
 
-    <!-- Rain drops with gradient (3 drops, staggered) -->
-    <!-- Drop 1 -->
     <path
-        android:pathData="M12,32 Q11,36 13,38 Q15,36 14,32 Z">
+        android:pathData="M11,33 Q10.2,37.8 12.7,40.5 Q15.1,37.6 14.1,33.4 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:startX="12"
-                android:startY="32"
-                android:endX="14"
-                android:endY="38"
-                android:type="linear">
-                <item android:offset="0"   android:color="#FF64B5F6"/>
-                <item android:offset="1.0" android:color="#FF1565C0"/>
-            </gradient>
-        </aapt:attr>
-    </path>
-    <!-- Drop 1 shine -->
-    <path android:fillColor="#66FFFFFF"
-        android:pathData="M12.5,33 Q12,34.5 12.5,35 Q11.8,34 12.5,33 Z"/>
-
-    <!-- Drop 2 -->
-    <path
-        android:pathData="M21,34 Q20,38 22,40 Q24,38 23,34 Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:startX="21"
-                android:startY="34"
-                android:endX="23"
+                android:startX="11"
+                android:startY="33"
+                android:endX="15"
                 android:endY="40"
                 android:type="linear">
-                <item android:offset="0"   android:color="#FF64B5F6"/>
-                <item android:offset="1.0" android:color="#FF1565C0"/>
+                <item android:offset="0"   android:color="#FFB5E5FF"/>
+                <item android:offset="0.4" android:color="#FF5DA6FF"/>
+                <item android:offset="1.0" android:color="#FF1747B5"/>
             </gradient>
         </aapt:attr>
     </path>
-    <path android:fillColor="#66FFFFFF"
-        android:pathData="M21.5,35 Q21,36.5 21.5,37 Q20.8,36 21.5,35 Z"/>
+    <path android:fillColor="#9DFFFFFF" android:pathData="M11.9,34.1 Q11.3,35.8 12.1,36.8 Q11.2,35.9 11.9,34.1 Z"/>
 
-    <!-- Drop 3 -->
     <path
-        android:pathData="M30,32 Q29,36 31,38 Q33,36 32,32 Z">
+        android:pathData="M20,34 Q19.2,39 21.8,41.6 Q24.1,38.5 23,34.4 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:startX="30"
+                android:startX="20"
+                android:startY="34"
+                android:endX="24"
+                android:endY="41"
+                android:type="linear">
+                <item android:offset="0"   android:color="#FFB5E5FF"/>
+                <item android:offset="0.4" android:color="#FF5DA6FF"/>
+                <item android:offset="1.0" android:color="#FF1747B5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#9DFFFFFF" android:pathData="M20.8,35.1 Q20.2,36.8 21,37.8 Q20.2,36.9 20.8,35.1 Z"/>
+
+    <path
+        android:pathData="M29,32 Q28.2,36.8 30.7,39.5 Q33.1,36.6 32.1,32.4 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="29"
                 android:startY="32"
-                android:endX="32"
-                android:endY="38"
+                android:endX="33"
+                android:endY="39"
                 android:type="linear">
-                <item android:offset="0"   android:color="#FF64B5F6"/>
-                <item android:offset="1.0" android:color="#FF1565C0"/>
+                <item android:offset="0"   android:color="#FFB5E5FF"/>
+                <item android:offset="0.4" android:color="#FF5DA6FF"/>
+                <item android:offset="1.0" android:color="#FF1747B5"/>
             </gradient>
         </aapt:attr>
     </path>
-    <path android:fillColor="#66FFFFFF"
-        android:pathData="M30.5,33 Q30,34.5 30.5,35 Q29.8,34 30.5,33 Z"/>
-
-    <!-- Drop 4 (offset) -->
-    <path
-        android:pathData="M17,38 Q16,42 18,44 Q20,42 19,38 Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:startX="17"
-                android:startY="38"
-                android:endX="19"
-                android:endY="44"
-                android:type="linear">
-                <item android:offset="0"   android:color="#FF90CAF9"/>
-                <item android:offset="1.0" android:color="#FF1976D2"/>
-            </gradient>
-        </aapt:attr>
-    </path>
-
-    <!-- Drop 5 (offset) -->
-    <path
-        android:pathData="M26,38 Q25,42 27,44 Q29,42 28,38 Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:startX="26"
-                android:startY="38"
-                android:endX="28"
-                android:endY="44"
-                android:type="linear">
-                <item android:offset="0"   android:color="#FF90CAF9"/>
-                <item android:offset="1.0" android:color="#FF1976D2"/>
-            </gradient>
-        </aapt:attr>
-    </path>
+    <path android:fillColor="#9DFFFFFF" android:pathData="M29.8,33.1 Q29.2,34.8 30,35.8 Q29.2,34.9 29.8,33.1 Z"/>
 </vector>

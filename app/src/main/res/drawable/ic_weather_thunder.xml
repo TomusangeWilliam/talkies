@@ -5,12 +5,10 @@
     android:viewportWidth="48"
     android:viewportHeight="48">
 
-    <!-- Cloud shadow -->
     <path
-        android:pathData="M38,27c0,3.31 -2.69,6 -6,6H10c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C9.38,7.84 12.62,5 16.5,5c2.27,0 4.33,0.93 5.82,2.43C23.58,6.35 25.2,6 27,6c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L38,27Z"
-        android:fillColor="#22000000"/>
+        android:pathData="M39,29c0,4.42 -3.58,8 -8,8H10c-5.52,0 -10,-4.48 -10,-10 0,-4.73 3.35,-8.71 7.82,-9.76C9.86,9.49 13.63,6 18.2,6c2.54,0 4.85,0.9 6.66,2.41C27.08,7.41 28.7,7 30.5,7c6.35,0 11.5,5.15 11.5,11.5 0,0.42 -0.03,0.83 -0.08,1.23 0.6,0.89 1.08,1.97 1.08,3.27Z"
+        android:fillColor="#33000000"/>
 
-    <!-- Dark storm cloud body -->
     <path
         android:pathData="M37,25c0,3.31 -2.69,6 -6,6H9c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C8.38,5.84 11.62,3 15.5,3c2.27,0 4.33,0.93 5.82,2.43C22.58,4.35 24.2,4 26,4c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L37,25Z">
         <aapt:attr name="android:fillColor">
@@ -18,45 +16,36 @@
                 android:startX="9"
                 android:startY="3"
                 android:endX="37"
-                android:endY="25"
+                android:endY="31"
                 android:type="linear">
-                <item android:offset="0"   android:color="#FF90A4AE"/>
-                <item android:offset="0.5" android:color="#FF607D8B"/>
-                <item android:offset="1.0" android:color="#FF37474F"/>
+                <item android:offset="0"   android:color="#FFB8C4CB"/>
+                <item android:offset="0.34" android:color="#FF8698A2"/>
+                <item android:offset="0.7" android:color="#FF536B77"/>
+                <item android:offset="1.0" android:color="#FF26363D"/>
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Cloud highlight (subtle on dark cloud) -->
-    <path
-        android:pathData="M12,7 Q16,4 21,6 Q16,6 14,9 Z"
-        android:fillColor="#44FFFFFF"/>
+    <path android:pathData="M12,7 Q17,4 22,6 Q17,6.5 14,10 Z" android:fillColor="#AAFFFFFF"/>
+    <path android:pathData="M21,23 L15,35 L22,32 L18,46 L31,28 L24.5,30.5 L29,23 Z" android:fillColor="#55FFE082"/>
 
-    <!-- Lightning bolt glow (behind bolt) -->
     <path
-        android:pathData="M22,26 L17,36 L22,34 L18,45 L30,30 L24,32 L28,26 Z"
-        android:fillColor="#33FFFF00"/>
-
-    <!-- Lightning bolt with gradient -->
-    <path
-        android:pathData="M21,26 L16,36 L21,34 L17,45 L29,30 L23,32 L27,26 Z">
+        android:pathData="M20,23 L14,35 L21,31.5 L17,46 L31,27 L24,29.5 L29,23 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:startX="17"
-                android:startY="26"
-                android:endX="29"
-                android:endY="45"
+                android:startX="14"
+                android:startY="23"
+                android:endX="31"
+                android:endY="46"
                 android:type="linear">
-                <item android:offset="0"   android:color="#FFFFFFCC"/>
-                <item android:offset="0.3" android:color="#FFFFEE58"/>
-                <item android:offset="0.7" android:color="#FFFFD600"/>
-                <item android:offset="1.0" android:color="#FFFF8F00"/>
+                <item android:offset="0"   android:color="#FFFFFFD9"/>
+                <item android:offset="0.2" android:color="#FFFFF176"/>
+                <item android:offset="0.58" android:color="#FFFFC107"/>
+                <item android:offset="1.0" android:color="#FFFF6F00"/>
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Lightning highlight (left edge shine) -->
-    <path
-        android:pathData="M21,26 L19,31 L21,30 L19.5,35 L22,31.5 L20.5,32 Z"
-        android:fillColor="#AAFFFFFF"/>
+    <path android:pathData="M20,24 L18.5,31 L21.5,29.2 L19.2,35.8 L24.7,30.2 L22,31.5 L26,24 Z" android:fillColor="#CCFFFFFF"/>
+    <path android:pathData="M9,31 Q21,35 34,31 Q31,38 23,40 H15 Q9,38 9,31 Z" android:fillColor="#22000000"/>
 </vector>

@@ -5,35 +5,33 @@
     android:viewportWidth="48"
     android:viewportHeight="48">
 
-    <!-- Cloud shadow (depth layer) -->
     <path
-        android:pathData="M38,34c0,3.31 -2.69,6 -6,6H12c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C11.38,20.84 14.62,18 18.5,18c2.27,0 4.33,0.93 5.82,2.43C25.58,19.35 27.2,19 29,19c5.52,0 10,4.03 10,9 -0.01,0.01 -0.01,0.01 -1,6Z"
-        android:fillColor="#1A000000"/>
+        android:pathData="M39,35c0,4.42 -3.58,8 -8,8H12c-5.52,0 -10,-4.48 -10,-10 0,-4.73 3.35,-8.71 7.82,-9.76C10.86,19.49 14.63,16 19.2,16c2.54,0 4.85,0.9 6.66,2.41C27.08,17.41 28.7,17 30.5,17c6.35,0 11.5,5.15 11.5,11.5 0,0.42 -0.03,0.83 -0.08,1.23 0.6,0.89 1.08,1.97 1.08,3.27Z"
+        android:fillColor="#33000000"/>
 
-    <!-- Main cloud body with gradient -->
     <path
-        android:pathData="M37,32c0,3.31 -2.69,6 -6,6H11c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C10.38,18.84 13.62,16 17.5,16c2.27,0 4.33,0.93 5.82,2.43C24.58,17.35 26.2,17 28,17c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L37,32Z">
+        android:pathData="M36,31c0,3.31 -2.69,6 -6,6H11c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C10.38,18.84 13.62,16 17.5,16c2.27,0 4.33,0.93 5.82,2.43C24.58,17.35 26.2,17 28,17c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L36,31Z"
+        android:fillColor="#5A90A4AE"/>
+
+    <path
+        android:pathData="M35,29c0,3.31 -2.69,6 -6,6H9c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C8.38,16.84 11.62,14 15.5,14c2.27,0 4.33,0.93 5.82,2.43C22.58,15.35 24.2,15 26,15c5.52,0 10,4.03 10,9 0,1.97 -0.64,3.75 -1.7,5.15L35,29Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:startX="11"
-                android:startY="16"
-                android:endX="38"
-                android:endY="38"
+                android:startX="9"
+                android:startY="14"
+                android:endX="35"
+                android:endY="35"
                 android:type="linear">
-                <item android:offset="0"   android:color="#FFFFFF"/>
-                <item android:offset="0.4" android:color="#E8EDF2"/>
-                <item android:offset="1.0" android:color="#B0BEC5"/>
+                <item android:offset="0"   android:color="#FFFFFFFF"/>
+                <item android:offset="0.27" android:color="#F5F8FB"/>
+                <item android:offset="0.62" android:color="#DCE7EE"/>
+                <item android:offset="0.88" android:color="#B4C4CF"/>
+                <item android:offset="1.0" android:color="#7890A1"/>
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Cloud specular highlight -->
-    <path
-        android:pathData="M14,20 Q18,17 22,19 Q18,19 16,22 Z"
-        android:fillColor="#AAFFFFFF"/>
-
-    <!-- Inner shadow at bottom of cloud -->
-    <path
-        android:pathData="M11,33 Q24,36 37,32 Q37,38 32,38 H11 Q7,38 7,34 Z"
-        android:fillColor="#15000000"/>
+    <path android:pathData="M15,18 Q20,14 25,17 Q20,18 17,22 Z" android:fillColor="#D9FFFFFF"/>
+    <path android:pathData="M9,31 Q22,35 34,31 Q31,38 22,39 H13 Q8,38 9,31 Z" android:fillColor="#23000000"/>
+    <path android:pathData="M18,28 Q21,26 25,28 Q21,30 18,28 Z" android:fillColor="#EAF2F8"/>
 </vector>
