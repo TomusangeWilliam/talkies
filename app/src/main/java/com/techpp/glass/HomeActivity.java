@@ -597,10 +597,6 @@ public class HomeActivity extends Activity {
     }
 
     private void updateWeatherIcon() {
-        if (weatherLine == null) {
-            weatherIcon.setVisibility(View.GONE);
-            return;
-        }
         weatherIcon.setVisibility(View.VISIBLE);
         int iconRes = getWeatherIcon(weatherLine);
         if (iconRes != 0) {
@@ -609,15 +605,26 @@ public class HomeActivity extends Activity {
         }
     }
 
-    private int getWeatherIcon(String weatherLine) {
-        if (weatherLine == null) return 0;
-        String lower = weatherLine.toLowerCase();
-        if (lower.contains("sunny") || lower.contains("clear")) return R.drawable.ic_weather_sunny;
-        if (lower.contains("rain") || lower.contains("showers") || lower.contains("drizzle")) return R.drawable.ic_weather_rain;
-        if (lower.contains("snow")) return R.drawable.ic_weather_snow;
+    static int weatherIconFor(String weatherLine) {
+        if (weatherLine == null || weatherLine.trim().isEmpty()) return R.drawable.ic_weather_cloudy;
+        String lower = weatherLine.toLowerCase(Locale.ROOT);
         if (lower.contains("thunder") || lower.contains("storm")) return R.drawable.ic_weather_thunder;
-        if (lower.contains("cloudy") || lower.contains("overcast") || lower.contains("fog")) return R.drawable.ic_weather_cloudy;
+        if (lower.contains("snow") || lower.contains("hail") || lower.contains("ice")) return R.drawable.ic_weather_snow;
+        if (lower.contains("rain") || lower.contains("shower") || lower.contains("drizzle") || lower.contains("downpour")) {
+            return R.drawable.ic_weather_rain;
+        }
+        if (lower.contains("fog") || lower.contains("mist") || lower.contains("haze") || lower.contains("smoke") || lower.contains("dust")) {
+            return R.drawable.ic_weather_cloudy;
+        }
+        if (lower.contains("cloudy") || lower.contains("overcast") || lower.contains("grey") || lower.contains("gray")) {
+            return R.drawable.ic_weather_cloudy;
+        }
+        if (lower.contains("sunny") || lower.contains("clear") || lower.contains("fair")) return R.drawable.ic_weather_sunny;
         return R.drawable.ic_weather_cloudy; // default
+    }
+
+    private int getWeatherIcon(String weatherLine) {
+        return weatherIconFor(weatherLine);
     }
 
     // ---------------------------------------------------------------- apps
