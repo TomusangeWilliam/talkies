@@ -1,0 +1,73 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Sun glow behind cloud -->
+    <path
+        android:pathData="M20,20m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="17"
+                android:centerY="17"
+                android:gradientRadius="14"
+                android:type="radial">
+                <item android:offset="0"   android:color="#FFFFFFFF"/>
+                <item android:offset="0.4" android:color="#FFFFE082"/>
+                <item android:offset="0.75" android:color="#FFFFA000"/>
+                <item android:offset="1.0" android:color="#00FFA000"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sun body (partially visible) -->
+    <path
+        android:pathData="M20,20m-7,0a7,7 0,1 1,14 0a7,7 0,1 1,-14 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="17"
+                android:centerY="16"
+                android:gradientRadius="8"
+                android:type="radial">
+                <item android:offset="0"   android:color="#FFFFFFFF"/>
+                <item android:offset="0.4" android:color="#FFFFD54F"/>
+                <item android:offset="1.0" android:color="#FFFF8F00"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sun rays (partial, top and sides) -->
+    <path android:fillColor="#FFD54F" android:pathData="M20,8 L21,11.5 L20,12 L19,11.5 Z"/>
+    <path android:fillColor="#FFD54F" android:pathData="M8,20 L11.5,19 L12,20 L11.5,21 Z"/>
+    <path android:fillColor="#FFD54F" android:pathData="M10.34,10.34 L12.76,12.76 L12,13.52 L10.34,12.1 Z"/>
+    <path android:fillColor="#FFD54F" android:pathData="M29.66,10.34 L28.24,12.1 L27.48,11.34 L29.1,9.34 Z"/>
+
+    <!-- Cloud shadow -->
+    <path
+        android:pathData="M42,34c0,2.76 -2.24,5 -5,5H18c-3.87,0 -7,-3.13 -7,-7 0,-3.42 2.47,-6.28 5.74,-6.87C17.73,17.05 20.64,15 24,15c1.92,0 3.66,0.69 5,1.81C30.26,15.66 31.61,15 33,15c4.42,0 8,3.13 8,7.5 0,0.26 -0.02,0.52 -0.04,0.77C42.6,24.13 43,25.51 43,27c0,2.59 -0.52,4 -1,7Z"
+        android:fillColor="#1A000000"/>
+
+    <!-- Cloud body -->
+    <path
+        android:pathData="M41,32c0,2.76 -2.24,5 -5,5H17c-3.87,0 -7,-3.13 -7,-7 0,-3.42 2.47,-6.28 5.74,-6.87C16.73,15.05 19.64,13 23,13c1.92,0 3.66,0.69 5,1.81C29.26,13.66 30.61,13 32,13c4.42,0 8,3.13 8,7.5 0,0.26 -0.02,0.52 -0.04,0.77C41.6,22.13 42,23.51 42,25c0,2.59 -0.52,5 -1,7Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="17"
+                android:startY="13"
+                android:endX="42"
+                android:endY="37"
+                android:type="linear">
+                <item android:offset="0"   android:color="#FFFFFFFF"/>
+                <item android:offset="0.5" android:color="#FFEEF2F6"/>
+                <item android:offset="1.0" android:color="#FFCFD8DC"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Cloud highlight -->
+    <path
+        android:pathData="M20,19 Q25,16 30,18 Q25,18 22,21 Z"
+        android:fillColor="#99FFFFFF"/>
+</vector>

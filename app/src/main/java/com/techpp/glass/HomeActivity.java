@@ -601,7 +601,8 @@ public class HomeActivity extends Activity {
         int iconRes = getWeatherIcon(weatherLine);
         if (iconRes != 0) {
             weatherIcon.setImageResource(iconRes);
-            weatherIcon.setImageTintList(ColorStateList.valueOf(theme.text2));
+            // No tint: allow the 3D gradient colors in each icon to show through.
+            weatherIcon.setImageTintList(null);
         }
     }
 
@@ -616,6 +617,8 @@ public class HomeActivity extends Activity {
         if (lower.contains("fog") || lower.contains("mist") || lower.contains("haze") || lower.contains("smoke") || lower.contains("dust")) {
             return R.drawable.ic_weather_cloudy;
         }
+        // "Partly cloudy" and "Mostly sunny/clear" get the sun-behind-cloud icon.
+        if (lower.contains("partly") || lower.contains("mostly")) return R.drawable.ic_weather_partly_cloudy;
         if (lower.contains("cloudy") || lower.contains("overcast") || lower.contains("grey") || lower.contains("gray")) {
             return R.drawable.ic_weather_cloudy;
         }

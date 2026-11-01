@@ -1,9 +1,62 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Outer glow ring -->
     <path
-        android:fillColor="#FFB74D"
-        android:pathData="M12,7c-2.76,0 -5,2.24 -5,5s2.24,5 5,5 5,-2.24 5,-5 -2.24,-5 -5,-5zM2,13h2c0.55,0 1,-0.45 1,-1s-0.45,-1 -1,-1H2c-0.55,0 -1,0.45 -1,1s0.45,1 1,1zM18,13h2c0.55,0 1,-0.45 1,-1s-0.45,-1 -1,-1h-2c-0.55,0 -1,0.45 -1,1s0.45,1 1,1zM11,2v2c0,0.55 0.45,1 1,1s1,-0.45 1,-1V2c0,-0.55 -0.45,-1 -1,-1s-1,0.45 -1,1zM11,20v2c0,0.55 0.45,1 1,1s1,-0.45 1,-1v-2c0,-0.55 -0.45,-1 -1,-1s-1,0.45 -1,1zM5.99,4.58c-0.39,-0.39 -1.03,-0.39 -1.41,0 -0.39,0.39 -0.39,1.03 0,1.41l1.06,1.06c0.39,0.39 1.03,0.39 1.41,0s0.39,-1.03 0,-1.41L5.99,4.58zM12.05,17.54c-0.39,-0.39 -1.03,-0.39 -1.41,0 -0.39,0.39 -0.39,1.03 0,1.41l1.06,1.06c0.39,0.39 1.03,0.39 1.41,0 0.39,-0.39 0.39,-1.03 0,-1.41l-1.06,-1.06zM5.99,19.42l1.06,-1.06c0.39,-0.39 0.39,-1.03 0,-1.41s-1.03,-0.39 -1.41,0l-1.06,1.06c-0.39,0.39 -0.39,1.03 0,1.41s1.03,0.39 1.41,0zM18.36,5.64l-1.06,1.06c-0.39,0.39 -0.39,1.03 0,1.41s1.03,0.39 1.41,0l1.06,-1.06c0.39,-0.39 0.39,-1.03 0,-1.41s-1.03,-0.39 -1.41,0zM17.54,12.05c-0.39,-0.39 -1.03,-0.39 -1.41,0 -0.39,0.39 -0.39,1.03 0,1.41l1.06,1.06c0.39,0.39 1.03,0.39 1.41,0 0.39,-0.39 0.39,-1.03 0,-1.41l-1.06,-1.06z"/>
+        android:pathData="M24,24m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="24"
+                android:centerY="24"
+                android:gradientRadius="18"
+                android:type="radial">
+                <item android:offset="0.6" android:color="#33FFD54F"/>
+                <item android:offset="1.0" android:color="#00FFD54F"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sun rays (8 rays) -->
+    <path android:fillColor="#FFD54F"
+        android:pathData="M24,4 L25.2,8.8 L24,9.5 L22.8,8.8 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M24,44 L22.8,39.2 L24,38.5 L25.2,39.2 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M4,24 L8.8,22.8 L9.5,24 L8.8,25.2 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M44,24 L39.2,25.2 L38.5,24 L39.2,22.8 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M7.76,7.76 L11.24,11.24 L10.18,12.3 L7.76,10.24 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M40.24,40.24 L36.76,36.76 L37.82,35.7 L40.24,37.76 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M40.24,7.76 L37.76,10.24 L36.7,9.18 L38.76,6.76 Z"/>
+    <path android:fillColor="#FFD54F"
+        android:pathData="M7.76,40.24 L10.24,37.76 L11.3,38.82 L9.24,41.24 Z"/>
+
+    <!-- Sun body with 3D radial gradient -->
+    <path
+        android:pathData="M24,24m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="20"
+                android:centerY="19"
+                android:gradientRadius="12"
+                android:type="radial">
+                <item android:offset="0"   android:color="#FFFFFF"/>
+                <item android:offset="0.3" android:color="#FFE57F"/>
+                <item android:offset="0.7" android:color="#FFB300"/>
+                <item android:offset="1.0" android:color="#E65100"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Specular highlight (top-left shine) -->
+    <path
+        android:pathData="M18,18 Q19,15 22,16 Q20,17 19,19 Z"
+        android:fillColor="#FFFFFFFF"/>
 </vector>

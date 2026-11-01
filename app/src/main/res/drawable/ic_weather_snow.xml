@@ -1,9 +1,77 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Cloud shadow -->
     <path
-        android:fillColor="#E3F2FD"
-        android:pathData="M19.35,10.04C18.67,6.59 15.64,4 12,4 9.11,4 6.6,5.64 5.35,8.04 2.34,8.36 0,10.91 0,14c0,3.31 2.69,6 6,6h13c2.76,0 5,-2.24 5,-5 0,-2.64 -2.05,-4.78 -4.65,-4.96zM8,13l-1.5,3h-1l1.5,-3h1zM13,13l-1.5,3h-1l1.5,-3h1zM18,13l-1.5,3h-1l1.5,-3h1z"/>
+        android:pathData="M38,28c0,3.31 -2.69,6 -6,6H10c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C9.38,8.84 12.62,6 16.5,6c2.27,0 4.33,0.93 5.82,2.43C23.58,7.35 25.2,7 27,7c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L38,28Z"
+        android:fillColor="#1A000000"/>
+
+    <!-- Cloud body — cool blue-white for snow -->
+    <path
+        android:pathData="M37,26c0,3.31 -2.69,6 -6,6H9c-4.42,0 -8,-3.58 -8,-8 0,-3.87 2.75,-7.1 6.41,-7.84C8.38,6.84 11.62,4 15.5,4c2.27,0 4.33,0.93 5.82,2.43C22.58,5.35 24.2,5 26,5c5.52,0 10,4.03 10,9 0,2.21 -0.76,4.23 -2,5.8L37,26Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="9"
+                android:startY="4"
+                android:endX="37"
+                android:endY="26"
+                android:type="linear">
+                <item android:offset="0"   android:color="#FFFFFFFF"/>
+                <item android:offset="0.5" android:color="#FFE8F4FD"/>
+                <item android:offset="1.0" android:color="#FFB3D9F0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Cloud highlight -->
+    <path
+        android:pathData="M12,8 Q16,5 21,7 Q16,7 14,10 Z"
+        android:fillColor="#88FFFFFF"/>
+
+    <!-- Snowflake 1 (center-left) -->
+    <path android:fillColor="#FF90CAF9"
+        android:pathData="M13,33 L13,39 M10,34.5 L16,37.5 M10,37.5 L16,34.5"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF90CAF9" android:fillColor="#00000000"
+        android:pathData="M13,33 L13,39"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF90CAF9" android:fillColor="#00000000"
+        android:pathData="M10,34.5 L16,37.5"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF90CAF9" android:fillColor="#00000000"
+        android:pathData="M10,37.5 L16,34.5"/>
+    <!-- Snowflake 1 dots -->
+    <path android:fillColor="#FFBBDEFB"
+        android:pathData="M13,33m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"/>
+    <path android:fillColor="#FFBBDEFB"
+        android:pathData="M13,39m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"/>
+
+    <!-- Snowflake 2 (center) -->
+    <path android:strokeWidth="1.5" android:strokeColor="#FF64B5F6" android:fillColor="#00000000"
+        android:pathData="M23,35 L23,43"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF64B5F6" android:fillColor="#00000000"
+        android:pathData="M19,37 L27,41"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF64B5F6" android:fillColor="#00000000"
+        android:pathData="M19,41 L27,37"/>
+    <path android:fillColor="#FFE3F2FD"
+        android:pathData="M23,35m-1.2,0a1.2,1.2 0,1 1,2.4 0a1.2,1.2 0,1 1,-2.4 0"/>
+    <path android:fillColor="#FFE3F2FD"
+        android:pathData="M23,43m-1.2,0a1.2,1.2 0,1 1,2.4 0a1.2,1.2 0,1 1,-2.4 0"/>
+    <path android:fillColor="#FFE3F2FD"
+        android:pathData="M19,37m-1.2,0a1.2,1.2 0,1 1,2.4 0a1.2,1.2 0,1 1,-2.4 0"/>
+    <path android:fillColor="#FFE3F2FD"
+        android:pathData="M27,41m-1.2,0a1.2,1.2 0,1 1,2.4 0a1.2,1.2 0,1 1,-2.4 0"/>
+
+    <!-- Snowflake 3 (right) -->
+    <path android:strokeWidth="1.5" android:strokeColor="#FF90CAF9" android:fillColor="#00000000"
+        android:pathData="M33,33 L33,39"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF90CAF9" android:fillColor="#00000000"
+        android:pathData="M30,34.5 L36,37.5"/>
+    <path android:strokeWidth="1.5" android:strokeColor="#FF90CAF9" android:fillColor="#00000000"
+        android:pathData="M30,37.5 L36,34.5"/>
+    <path android:fillColor="#FFBBDEFB"
+        android:pathData="M33,33m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"/>
+    <path android:fillColor="#FFBBDEFB"
+        android:pathData="M33,39m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"/>
 </vector>
