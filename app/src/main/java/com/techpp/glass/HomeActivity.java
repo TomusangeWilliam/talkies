@@ -47,6 +47,9 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -199,9 +202,12 @@ public class HomeActivity extends Activity {
     private Boolean wasOnline;
     private View forYouHead, bigClock;
     private TextView picksHint;
-    private TextView bigTime, bigAmPm, bigDate, bigWeather;
+    private TextView bigTime, bigAmPm, bigDate, bigWeather, holidayText;
     private ImageView weatherIcon;
     private View bigRule;
+    private String holidayLine = null;
+    private boolean holidayToday = false;
+    private static final String UGANDA_HOLIDAY_API_KEY = "2df6ddc8-402b-4c41-886d-d0287912a454";
     private boolean inFront;
 
     // Rearranging: hold OK on an app, arrows move it, OK places it, Back cancels.
@@ -249,7 +255,7 @@ public class HomeActivity extends Activity {
         else if (getIntent().getBooleanExtra("talkies_backup", false)) Backup.save(this);  // asked before Talkies was running
         setContentView(R.layout.activity_home);
         weigh(this::findViewById, R.id.title, 600, R.id.info, 400, R.id.score, 500, R.id.big_weather, 500, R.id.big_time, 400,
-                R.id.big_ampm, 500, R.id.big_date, 500, R.id.all_apps_label, 600, R.id.move_hint, 450);
+                R.id.big_ampm, 500, R.id.big_date, 500, R.id.public_holiday, 400, R.id.all_apps_label, 600, R.id.move_hint, 450);
         dp = getResources().getDisplayMetrics().density;
         prefs = getSharedPreferences("home", MODE_PRIVATE);
         pm = getPackageManager();
@@ -263,6 +269,7 @@ public class HomeActivity extends Activity {
         bigAmPm = findViewById(R.id.big_ampm);
         bigRule = findViewById(R.id.big_rule);
         bigWeather = findViewById(R.id.big_weather);
+        holidayText = findViewById(R.id.public_holiday);
         weatherIcon = findViewById(R.id.weather_icon);
         forYou = prefs.getBoolean("for_you", true);
         meters = findViewById(R.id.meters);
@@ -303,6 +310,7 @@ public class HomeActivity extends Activity {
         weatherLine = weather.cached();
         day = isDayNow();
         theme = Theme.of(day);
+        refreshPublicHoliday();
 
         loadApps();
         loadPicks();
@@ -359,6 +367,7 @@ public class HomeActivity extends Activity {
         bigAmPm.setTextColor(theme.text);
         bigDate.setTextColor(theme.text);
         bigWeather.setTextColor(theme.text2);
+        holidayText.setTextColor(theme.text2);
         meters.setColor(theme.text);
         bigRule.setBackgroundColor((theme.text2 & 0x00FFFFFF) | 0x66000000);
         allAppsLabel.setTextColor(theme.text);
@@ -495,8 +504,126 @@ public class HomeActivity extends Activity {
         bigWeather.setText(weatherLine == null ? "" : weatherLine);
         if (meters.getVisibility() == View.VISIBLE) meters.update();
         bigWeather.setVisibility(weatherLine == null ? View.GONE : View.VISIBLE);
+        updateHolidayText();
         updateWeatherIcon();
         updateScore();
+    }
+
+    private void updateHolidayText() {
+        if (holidayText == null) return;
+        if (holidayLine == null || holidayLine.trim().isEmpty()) {
+            holidayText.setVisibility(View.GONE);
+            holidayText.setText("");
+            return;
+        }
+        holidayText.setVisibility(View.VISIBLE);
+        holidayText.setTextColor(holidayToday ? 0xFFFFD54A : theme.text2);
+        holidayText.setText(holidayToday ? holidayLine : "Next holiday: " + holidayLine);
+    }
+
+    private void refreshPublicHoliday() {
+        background.execute(() -> {
+            try {
+                HolidayInfo info = fetchNextUgandaHoliday();
+                runOnUiThread(() -> {
+                    holidayLine = info.line;
+                    holidayToday = info.today;
+                    updateHolidayText();
+                });
+            } catch (Exception e) {
+                Log.w(TAG, "Public holiday fetch failed: " + e.getClass().getSimpleName() + " " + e.getMessage());
+                runOnUiThread(() -> {
+                    holidayLine = null;
+                    holidayToday = false;
+                    updateHolidayText();
+                });
+            }
+        });
+    }
+
+    private static final class HolidayInfo {
+        final String line;
+        final boolean today;
+        HolidayInfo(String line, boolean today) {
+            this.line = line;
+            this.today = today;
+        }
+    }
+
+    private static HolidayInfo fetchNextUgandaHoliday() throws Exception {
+        try {
+            String nextUrl = "https://date.nager.at/api/v3/NextPublicHolidays/UG";
+            java.net.HttpURLConnection h = (java.net.HttpURLConnection) new java.net.URL(nextUrl).openConnection();
+            h.setRequestMethod("GET");
+            h.setConnectTimeout(10_000);
+            h.setReadTimeout(10_000);
+            int code = h.getResponseCode();
+            if (code == 200) {
+                try (java.io.InputStream in = h.getInputStream()) {
+                    String payload = readFully(in);
+                    JSONArray arr = new JSONArray(payload);
+                    if (arr.length() == 0) return null;
+                    JSONObject first = arr.getJSONObject(0);
+                    String name = first.optString("localName", first.optString("name", "")).trim();
+                    String date = first.optString("date", "").trim();
+                    if (name.isEmpty()) return null;
+                    boolean today = isSameCalendarDate(date);
+                    if (date.isEmpty()) return new HolidayInfo(name, today);
+                    try {
+                        String friendly = new java.text.SimpleDateFormat("d MMM", Locale.US)
+                                .format(new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(date));
+                        return new HolidayInfo(name + " · " + friendly, today);
+                    } catch (Exception ignored) {
+                        return new HolidayInfo(name, today);
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Fall back to the supplied API key if it works.
+        }
+
+        String fallbackUrl = String.format(Locale.US,
+                "https://holidays.abstractapi.com/v1/?api_key=%s&country=UG&year=%d&month=%d&day=%d",
+                UGANDA_HOLIDAY_API_KEY, java.util.Calendar.getInstance().get(java.util.Calendar.YEAR),
+                java.util.Calendar.getInstance().get(java.util.Calendar.MONTH) + 1,
+                java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH));
+        java.net.HttpURLConnection h = (java.net.HttpURLConnection) new java.net.URL(fallbackUrl).openConnection();
+        h.setRequestMethod("GET");
+        h.setConnectTimeout(10_000);
+        h.setReadTimeout(10_000);
+        int code = h.getResponseCode();
+        if (code != 200) throw new IllegalStateException("Holiday API HTTP " + code);
+        try (java.io.InputStream in = h.getInputStream()) {
+            JSONArray a = new JSONArray(readFully(in));
+            if (a.length() == 0) return null;
+            JSONObject first = a.optJSONObject(0);
+            String holiday = first == null ? null : first.optString("name", "");
+            if (holiday == null || holiday.trim().isEmpty()) return null;
+            return new HolidayInfo(holiday.trim(), true);
+        }
+    }
+
+    private static boolean isSameCalendarDate(String isoDate) {
+        if (isoDate == null || isoDate.trim().isEmpty()) return false;
+        try {
+            java.util.Date parsed = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(isoDate);
+            java.util.Calendar holiday = java.util.Calendar.getInstance();
+            holiday.setTime(parsed);
+            java.util.Calendar now = java.util.Calendar.getInstance();
+            return holiday.get(java.util.Calendar.YEAR) == now.get(java.util.Calendar.YEAR)
+                    && holiday.get(java.util.Calendar.MONTH) == now.get(java.util.Calendar.MONTH)
+                    && holiday.get(java.util.Calendar.DAY_OF_MONTH) == now.get(java.util.Calendar.DAY_OF_MONTH);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String readFully(java.io.InputStream in) throws Exception {
+        byte[] bytes = new byte[4096];
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        int n;
+        while ((n = in.read(bytes)) != -1) out.write(bytes, 0, n);
+        return out.toString(java.nio.charset.StandardCharsets.UTF_8.name());
     }
 
     /** Control Center → Live scores: "both" (the default), "cricket", "football" or "off". */
@@ -567,6 +694,7 @@ public class HomeActivity extends Activity {
 
     private void onMinute() {
         updateInfo();
+        refreshPublicHoliday();
         refreshOnline();
         boolean nowDay = isDayNow();
         if (nowDay != day) { day = nowDay; applyTheme(); }
