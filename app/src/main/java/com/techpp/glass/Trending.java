@@ -365,10 +365,11 @@ final class Trending {
         java.util.concurrent.Future<JSONObject> newShows = later(key, "/discover/tv?with_origin_country=" + region
                 + "&air_date.gte=" + day(-60) + "&air_date.lte=" + day(0) + only + common);
         boolean anyLocal = chosen.isEmpty() || !others.isEmpty();
-        java.util.concurrent.Future<JSONObject> localFilms = anyLocal ? later(key, "/discover/movie?" + localBy + popular) : null;
-        java.util.concurrent.Future<JSONObject> localShows = anyLocal ? later(key, "/discover/tv?" + localBy + popular) : null;
-        java.util.concurrent.Future<JSONObject> englishFilms = withEnglish ? later(key, "/discover/movie?with_original_language=en" + popular) : null;
-        java.util.concurrent.Future<JSONObject> englishShows = withEnglish ? later(key, "/discover/tv?with_original_language=en" + popular) : null;
+        String weeklyLanguage = chosen.isEmpty() ? "" : "?language=" + String.join("|", chosen);
+        java.util.concurrent.Future<JSONObject> localFilms = anyLocal ? later(key, "/trending/movie/week" + weeklyLanguage) : null;
+        java.util.concurrent.Future<JSONObject> localShows = anyLocal ? later(key, "/trending/tv/week" + weeklyLanguage) : null;
+        java.util.concurrent.Future<JSONObject> englishFilms = withEnglish ? later(key, "/trending/movie/week?language=en") : null;
+        java.util.concurrent.Future<JSONObject> englishShows = withEnglish ? later(key, "/trending/tv/week?language=en") : null;
 
         // "New in …" first, so Trending can leave its titles out.
         List<JSONObject> fresh = merge(tag(results(newFilms), "movie"), tag(results(newShows), "tv"));
