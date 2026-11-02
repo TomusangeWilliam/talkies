@@ -150,7 +150,8 @@ public class HomeActivity extends Activity {
     private Football football;
     private List<Cricket.Match> matches = new ArrayList<>(), footballMatches = new ArrayList<>();
     private List<Channels.Channel> appChannels = new ArrayList<>();  // the shown app channels, without Cricket
-    private TextView score;
+    private TextView score, scoreNote;
+    private ImageView scoreBadge, scoreBadgeAway;
     private String weatherLine;
     private List<Trending.Pick> watchNextPicks = new ArrayList<>(), recentPicks = new ArrayList<>(),
             trendPicks = new ArrayList<>(), indiaPicks = new ArrayList<>(), rowPicks = new ArrayList<>();
@@ -289,6 +290,8 @@ public class HomeActivity extends Activity {
         moveHint = findViewById(R.id.move_hint);
         picksRow = findViewById(R.id.picks);
         picksHint = findViewById(R.id.picks_hint);
+        scoreBadge = findViewById(R.id.score_badge);
+        scoreBadgeAway = findViewById(R.id.score_badge_away);
         ring = findViewById(R.id.ring);
         tabs = new TextView[]{findViewById(R.id.tab_recent), findViewById(R.id.tab_trending), findViewById(R.id.tab_india)};
         icons = new ImageView[]{findViewById(R.id.icon_cc), findViewById(R.id.icon_inputs), findViewById(R.id.icon_wifi),
@@ -307,6 +310,7 @@ public class HomeActivity extends Activity {
         cricket = new Cricket(this);
         football = new Football(this);
         score = findViewById(R.id.score);
+        scoreNote = findViewById(R.id.score_note);
         weatherLine = weather.cached();
         day = isDayNow();
         theme = Theme.of(day);
@@ -641,6 +645,9 @@ public class HomeActivity extends Activity {
                 : !c.isEmpty() ? c.get(0) : !f.isEmpty() ? f.get(0) : null;
         if (m == null) {
             score.setVisibility(View.GONE);
+            scoreNote.setVisibility(View.GONE);
+            scoreBadge.setVisibility(View.GONE);
+            scoreBadgeAway.setVisibility(View.GONE);
             credit.setAlpha(1f);
             return;
         }
@@ -677,6 +684,39 @@ public class HomeActivity extends Activity {
         score.setText(b);
         score.setTextColor(theme.text);
         score.setVisibility(View.VISIBLE);
+        scoreNote.setText("GOD IS GOOD");
+        scoreNote.setVisibility(View.VISIBLE);
+
+        if (m.img1 != null && !m.img1.isEmpty()) {
+            scoreBadge.setVisibility(View.VISIBLE);
+            background.execute(() -> {
+                File badgeFile = WatchNext.cached(this, new File(getExternalFilesDir(null), "cricket/flags"), m.img1, 64);
+                Bitmap badgeBitmap = badgeFile == null ? null : BitmapFactory.decodeFile(badgeFile.getPath());
+                if (badgeBitmap != null) runOnUiThread(() -> {
+                    scoreBadge.setImageBitmap(badgeBitmap);
+                    scoreBadge.setVisibility(View.VISIBLE);
+                });
+            });
+        } else {
+            scoreBadge.setImageDrawable(null);
+            scoreBadge.setVisibility(View.GONE);
+        }
+
+        if (m.img2 != null && !m.img2.isEmpty()) {
+            scoreBadgeAway.setVisibility(View.VISIBLE);
+            background.execute(() -> {
+                File badgeFile = WatchNext.cached(this, new File(getExternalFilesDir(null), "cricket/flags"), m.img2, 64);
+                Bitmap badgeBitmap = badgeFile == null ? null : BitmapFactory.decodeFile(badgeFile.getPath());
+                if (badgeBitmap != null) runOnUiThread(() -> {
+                    scoreBadgeAway.setImageBitmap(badgeBitmap);
+                    scoreBadgeAway.setVisibility(View.VISIBLE);
+                });
+            });
+        } else {
+            scoreBadgeAway.setImageDrawable(null);
+            scoreBadgeAway.setVisibility(View.GONE);
+        }
+
         credit.setAlpha(0f);  // the score sits where the TMDB credit goes; TMDB is credited in the README too
     }
 

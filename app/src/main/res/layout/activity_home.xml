@@ -101,17 +101,63 @@
         </LinearLayout>
 
         <!-- Cricket: the most relevant live (or today's) match, under the time and weather -->
-        <TextView
-            android:id="@+id/score"
+        <LinearLayout
+            android:id="@+id/score_widget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|top"
             android:layout_marginTop="72dp"
             android:layout_marginEnd="40dp"
-            android:fontFamily="@font/outfit"
-            android:singleLine="true"
-            android:textSize="13sp"
-            android:visibility="gone" />
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/score_badge"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/score_badge_away"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/outfit"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/score_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/outfit"
+                android:singleLine="true"
+                android:text="GOD IS GOOD"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/credit"
