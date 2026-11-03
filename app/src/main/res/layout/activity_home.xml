@@ -126,16 +126,6 @@
                     android:scaleType="fitCenter"
                     android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/score_badge_away"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:layout_marginStart="8dp"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:scaleType="fitCenter"
-                    android:visibility="gone" />
-
                 <TextView
                     android:id="@+id/score"
                     android:layout_width="wrap_content"
@@ -144,6 +134,16 @@
                     android:fontFamily="@font/outfit"
                     android:singleLine="true"
                     android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/score_badge_away"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -154,7 +154,55 @@
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/outfit"
                 android:singleLine="true"
-                android:text="GOD IS GOOD"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/live_now_panel"
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="148dp"
+            android:layout_marginEnd="40dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/live_now_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/outfit"
+                android:paddingBottom="6dp"
+                android:text="LIVE NOW"
+                android:textAllCaps="true"
+                android:textColor="#FFB861"
+                android:textSize="11sp" />
+
+            <HorizontalScrollView
+                android:id="@+id/live_now_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="false"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/live_now_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/live_now_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/outfit"
+                android:text="No live matches"
+                android:textColor="#B7C0CF"
                 android:textSize="11sp"
                 android:visibility="gone" />
         </LinearLayout>

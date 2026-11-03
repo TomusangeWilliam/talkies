@@ -107,6 +107,10 @@ final class Cricket {
         boolean football;                         // a Football match (same card): kind is the league, status the clock
         String short1, short2;                    // football: three-letter names for the score line ("ARS")
         String league;                            // football: the league's short name for the score line ("EPL")
+        String leagueLogo;                        // football: the league logo URL (from ESPN leagues array, dark variant)
+        String scorer;                            // football: scorer name from the last goal event, if the feed exposes one
+        String goalMinute;                        // football: the minute of the last goal, from the match detail feed
+        long at;                                  // kickoff time in UTC epoch millis
     }
 
     interface Listener { void onMatches(List<Match> matches); }
@@ -566,3 +570,4 @@ final class Cricket {
         return out.toByteArray();
     }
 }
+

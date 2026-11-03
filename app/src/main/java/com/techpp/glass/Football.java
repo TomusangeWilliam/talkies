@@ -46,7 +46,7 @@ final class Football {
     private static final String API = "https://site.api.espn.com/apis/site/v2/sports/soccer/";
     private static final long FULL_MS = 15 * 60_000L, LIVE_MS = 30_000L, RETRY_MS = 5 * 60_000L;
     private static final long PAST_MS = 12 * 3600_000L, AHEAD_MS = 24 * 3600_000L;
-    private static final int MAX = 12;
+    private static final int MAX = 48;
 
     /**
      * ESPN's league ids, the names shown in Control Center and on the cards, and the short ones fans use, for the
@@ -114,6 +114,12 @@ final class Football {
         return id;
     }
 
+    static List<String> allLeagueIds() {
+        List<String> out = new ArrayList<>();
+        for (String[] l : LEAGUES) out.add(l[0]);
+        return out;
+    }
+
     /** The leagues to show, in menu order: your choice, or the TV's country's defaults. */
     List<String> leagues() {
         String saved = prefs.getString("leagues", null);
@@ -145,10 +151,11 @@ final class Football {
     // ---------------------------------------------------------------- fetching
 
     /** The last matches fetched, still within the window. Blocking (reads a small file). */
-    List<Cricket.Match> cached() {
+    List<Cricket.Match> cached() { return cached(leagues()); }
+
+    List<Cricket.Match> cached(List<String> on) {
         try (InputStream in = new FileInputStream(new File(dir, "matches.json"))) {
             JSONArray a = new JSONArray(new String(readAll(in), StandardCharsets.UTF_8));
-            List<String> on = leagues();
             List<Cricket.Match> out = new ArrayList<>();
             long now = System.currentTimeMillis();
             for (int i = 0; i < a.length(); i++) {
@@ -167,6 +174,24 @@ final class Football {
     /** The network is back: a fetch that failed while it was down may run again now, without waiting out the retry. */
     void networkBack() {
         if (prefs.getLong("try_at", 0) > prefs.getLong("ok_at", 0)) prefs.edit().remove("try_at").apply();
+    }
+
+    List<Cricket.Match> refreshNow() {
+        return refreshNow(leagues());
+    }
+
+    List<Cricket.Match> refreshNow(List<String> on) {
+        if (running) return cached();
+        if (on == null || on.isEmpty()) return new ArrayList<>();
+        running = true;
+        try {
+            return fetch(on, null);
+        } catch (Exception e) {
+            Log.w(TAG, "Football refreshNow failed: " + e.getClass().getSimpleName() + " " + e.getMessage());
+            return cached();
+        } finally {
+            running = false;
+        }
     }
 
     void refreshIfStale(Listener l) {
@@ -231,9 +256,26 @@ final class Football {
                 continue;
             }
             fetched++;
+            // Extract the league logo URL (dark variant preferred for dark floating cards).
+            String leagueLogo = "";
+            JSONArray leagueArr = d.optJSONArray("leagues");
+            if (leagueArr != null && leagueArr.length() > 0) {
+                JSONArray logos = leagueArr.getJSONObject(0).optJSONArray("logos");
+                if (logos != null) {
+                    for (int li = 0; li < logos.length(); li++) {
+                        JSONObject logo = logos.optJSONObject(li);
+                        if (logo == null) continue;
+                        JSONArray rel = logo.optJSONArray("rel");
+                        boolean dark = false;
+                        if (rel != null) for (int ri = 0; ri < rel.length(); ri++) if ("dark".equals(rel.optString(ri))) { dark = true; break; }
+                        String href = logo.optString("href", "");
+                        if (!href.isEmpty()) { leagueLogo = href; if (dark) break; }
+                    }
+                }
+            }
             JSONArray events = d.optJSONArray("events");
             for (int i = 0; events != null && i < events.length(); i++) {
-                JSONObject m = parse(events.getJSONObject(i), league, date);
+                JSONObject m = parse(events.getJSONObject(i), league, date, leagueLogo);
                 if (m != null) byId.put(m.getString("id"), m);
             }
         }
@@ -284,7 +326,7 @@ final class Football {
     }
 
     /** One ESPN event as the small record saved and shown, or null if it's unusable. */
-    private static JSONObject parse(JSONObject e, String league, String date) throws Exception {
+    private static JSONObject parse(JSONObject e, String league, String date, String leagueLogo) throws Exception {
         JSONObject c = e.getJSONArray("competitions").getJSONObject(0);
         JSONObject st = c.getJSONObject("status"), type = st.getJSONObject("type");
         JSONArray teams = c.getJSONArray("competitors");
@@ -319,13 +361,49 @@ final class Football {
         o.put("img2", away.getJSONObject("team").optString("logo"));
         o.put("s1", "pre".equals(state) ? "" : home.optString("score"));
         o.put("s2", "pre".equals(state) ? "" : away.optString("score"));
+        JSONObject lastGoal = lastGoalEvent(c);
+        o.put("scorer", lastGoal == null ? "" : getScorerName(lastGoal));
+        o.put("goalMinute", lastGoal == null ? "" : getGoalMinute(lastGoal));
+        o.put("leagueLogo", leagueLogo == null ? "" : leagueLogo);
         return o;
+    }
+
+    private static JSONObject lastGoalEvent(JSONObject c) {
+        JSONArray details = c.optJSONArray("details");
+        if (details == null) return null;
+        for (int i = details.length() - 1; i >= 0; i--) {
+            JSONObject d = details.optJSONObject(i);
+            if (d == null) continue;
+            if (d.optBoolean("scoringPlay", false)) return d;
+        }
+        return null;
+    }
+
+    private static String getScorerName(JSONObject goal) {
+        JSONArray athletes = goal.optJSONArray("athletesInvolved");
+        if (athletes == null || athletes.length() == 0) return "";
+        for (int i = 0; i < athletes.length(); i++) {
+            JSONObject a = athletes.optJSONObject(i);
+            if (a == null) continue;
+            String name = a.optString("displayName", a.optString("fullName", a.optString("shortName", ""))).trim();
+            if (!name.isEmpty()) return name;
+        }
+        return "";
+    }
+
+    private static String getGoalMinute(JSONObject goal) {
+        JSONObject clock = goal.optJSONObject("clock");
+        if (clock == null) return "";
+        String minute = clock.optString("displayValue", "").trim();
+        if (minute.isEmpty()) return "";
+        return minute;
     }
 
     private static Cricket.Match fromJson(JSONObject o) {
         Cricket.Match m = new Cricket.Match();
         m.football = true;
         m.id = "fb" + o.optString("id");
+        m.at = o.optLong("at");
         m.live = o.optBoolean("live");
         m.ended = o.optBoolean("ended");
         m.kind = leagueName(o.optString("league"));
@@ -340,6 +418,9 @@ final class Football {
         m.s2 = o.optString("s2");
         m.img1 = o.optString("img1");
         m.img2 = o.optString("img2");
+        m.scorer = o.optString("scorer");
+        m.goalMinute = o.optString("goalMinute");
+        m.leagueLogo = o.optString("leagueLogo");
         m.status = o.optString("status");
         m.name = m.full1 + " v " + m.full2;
         m.start = m.live || m.ended ? null
@@ -399,3 +480,4 @@ final class Football {
         return out.toByteArray();
     }
 }
+

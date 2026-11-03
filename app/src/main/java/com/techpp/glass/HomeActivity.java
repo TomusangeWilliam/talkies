@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -47,6 +48,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -57,6 +59,7 @@ import android.view.ViewOutlineProvider;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -152,6 +156,13 @@ public class HomeActivity extends Activity {
     private List<Channels.Channel> appChannels = new ArrayList<>();  // the shown app channels, without Cricket
     private TextView score, scoreNote;
     private ImageView scoreBadge, scoreBadgeAway;
+    private HorizontalScrollView liveNowScroll;
+    private LinearLayout liveNowList, liveNowPanel;
+    private TextView liveNowEmpty;
+    private final Map<String, String> lastFootballScores = new HashMap<>();
+    private final Map<String, String> lastFootballAlertStates = new HashMap<>();
+    private LinearLayout goalAlert;
+    private TextView goalAlertText;
     private String weatherLine;
     private List<Trending.Pick> watchNextPicks = new ArrayList<>(), recentPicks = new ArrayList<>(),
             trendPicks = new ArrayList<>(), indiaPicks = new ArrayList<>(), rowPicks = new ArrayList<>();
@@ -292,6 +303,11 @@ public class HomeActivity extends Activity {
         picksHint = findViewById(R.id.picks_hint);
         scoreBadge = findViewById(R.id.score_badge);
         scoreBadgeAway = findViewById(R.id.score_badge_away);
+        scoreNote = findViewById(R.id.score_note);
+        liveNowPanel = findViewById(R.id.live_now_panel);
+        liveNowScroll = findViewById(R.id.live_now_scroll);
+        liveNowList = findViewById(R.id.live_now_list);
+        liveNowEmpty = findViewById(R.id.live_now_empty);
         ring = findViewById(R.id.ring);
         tabs = new TextView[]{findViewById(R.id.tab_recent), findViewById(R.id.tab_trending), findViewById(R.id.tab_india)};
         icons = new ImageView[]{findViewById(R.id.icon_cc), findViewById(R.id.icon_inputs), findViewById(R.id.icon_wifi),
@@ -310,7 +326,6 @@ public class HomeActivity extends Activity {
         cricket = new Cricket(this);
         football = new Football(this);
         score = findViewById(R.id.score);
-        scoreNote = findViewById(R.id.score_note);
         weatherLine = weather.cached();
         day = isDayNow();
         theme = Theme.of(day);
@@ -336,6 +351,10 @@ public class HomeActivity extends Activity {
     // ---------------------------------------------------------------- theme
 
     /** Colours for the light (day) and dark (night) looks. */
+    private boolean liveScoreAlertEnabled() {
+        return prefs.getBoolean("live_score_alert", true);
+    }
+
     private static final class Theme {
         int bgTop, bgBottom, text, text2, iconBg, iconStroke, iconFocusBg, iconFocusFg, band, bandStroke,
                 scrimTop, scrimMid, scrimBottom, menuBg, menuStroke, menuFocusBg, menuFocusText, tileBg;
@@ -657,7 +676,7 @@ public class HomeActivity extends Activity {
             String result = m.short1 + " " + m.s1 + "–" + m.s2 + " " + m.short2;
             if (m.live) {
                 b.append("● LIVE  ");
-                b.setSpan(new ForegroundColorSpan(0xFFFF453A), 0, 6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                b.setSpan(new ForegroundColorSpan(0xFFFFA000), 0, 6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 b.append(m.league).append("  ·  ").append(m.status).append("  ·  ").append(result);
             } else if (!m.ended) {
                 b.append(m.league).append("  ·  ").append(m.short1).append(" v ").append(m.short2)
@@ -673,7 +692,7 @@ public class HomeActivity extends Activity {
                     .append("  ·  ").append(why);
         } else if (m.live) {
             b.append("● LIVE  ");
-            b.setSpan(new ForegroundColorSpan(0xFFFF453A), 0, 6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            b.setSpan(new ForegroundColorSpan(0xFFFFA000), 0, 6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             if (!m.kind.isEmpty()) b.append(m.kind).append("  ·  ");
             b.append(m.t1).append(m.s1.isEmpty() ? "" : " " + m.s1).append("  v  ").append(m.t2).append(m.s2.isEmpty() ? "" : " " + m.s2);
         } else if (!m.ended) {
@@ -681,11 +700,29 @@ public class HomeActivity extends Activity {
         } else {
             b.append(m.t1).append(" v ").append(m.t2).append("  ·  ").append(m.status);
         }
-        score.setText(b);
+        if (m.football && m.live) {
+            String home = m.short1.isEmpty() ? m.t1 : m.short1;
+            String away = m.short2.isEmpty() ? m.t2 : m.short2;
+            String minute = m.status == null || m.status.isEmpty() ? "" : m.status;
+            SpannableStringBuilder footballScore = new SpannableStringBuilder("LIVE");
+            footballScore.setSpan(new ForegroundColorSpan(0xFFFFA000), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            footballScore.append("  ·  ").append(m.league);
+            if (!minute.isEmpty()) footballScore.append("  ·  ").append(minute);
+            footballScore.append("  ·  ").append(home).append(" ").append(m.s1).append("–").append(m.s2).append(" ").append(away);
+            score.setText(footballScore);
+        } else {
+            score.setText(b);
+        }
         score.setTextColor(theme.text);
         score.setVisibility(View.VISIBLE);
-        scoreNote.setText("GOD IS GOOD");
-        scoreNote.setVisibility(View.VISIBLE);
+        if (m.football && m.live) {
+            String note = goalNoteText(m);
+            scoreNote.setText(note);
+            scoreNote.setTextColor(0xFFFFFFFF);
+            scoreNote.setVisibility(View.VISIBLE);
+        } else {
+            scoreNote.setVisibility(View.GONE);
+        }
 
         if (m.img1 != null && !m.img1.isEmpty()) {
             scoreBadge.setVisibility(View.VISIBLE);
@@ -718,6 +755,118 @@ public class HomeActivity extends Activity {
         }
 
         credit.setAlpha(0f);  // the score sits where the TMDB credit goes; TMDB is credited in the README too
+        updateLiveNowPanel();
+    }
+
+    private List<Cricket.Match> liveMatchesForPanel() {
+        List<Cricket.Match> live = new ArrayList<>();
+        for (Cricket.Match match : cricketShown()) if (match != null && match.live && !match.ended) live.add(match);
+        for (Cricket.Match match : footballShown()) if (match != null && match.live && !match.ended) live.add(match);
+        return live;
+    }
+
+    private String liveMatchScore(Cricket.Match match) {
+        if (match == null) return "";
+        if (match.football) {
+            String home = match.short1 == null || match.short1.trim().isEmpty() ? match.t1 : match.short1;
+            String away = match.short2 == null || match.short2.trim().isEmpty() ? match.t2 : match.short2;
+            String score = (match.s1 == null ? "0" : match.s1) + "–" + (match.s2 == null ? "0" : match.s2);
+            return home + " " + score + " " + away;
+        }
+        String left = match.t1 == null ? "" : match.t1;
+        String right = match.t2 == null ? "" : match.t2;
+        return left + " " + (match.s1 == null ? "" : match.s1) + " - " + (match.s2 == null ? "" : match.s2) + " " + right;
+    }
+
+    private void showLiveMatchDetails(Cricket.Match match) {
+        if (match == null) return;
+        String title = match.football ? "Live match" : "Live score";
+        StringBuilder body = new StringBuilder();
+        if (match.football) {
+            body.append(match.league == null || match.league.isEmpty() ? "Football" : match.league).append("\n");
+            body.append(liveMatchScore(match)).append("\n");
+            if (match.status != null && !match.status.trim().isEmpty()) body.append("Status: ").append(match.status).append("\n");
+            if (match.scorer != null && !match.scorer.trim().isEmpty()) {
+                body.append("Last goal: ").append(match.scorer);
+                if (match.goalMinute != null && !match.goalMinute.trim().isEmpty()) body.append(" ").append(match.goalMinute);
+            }
+        } else {
+            body.append(match.kind == null || match.kind.isEmpty() ? "Match" : match.kind).append("\n");
+            body.append(liveMatchScore(match)).append("\n");
+            if (match.status != null && !match.status.trim().isEmpty()) body.append("Status: ").append(match.status);
+        }
+        new android.app.AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+                .setTitle(title)
+                .setMessage(body.toString())
+                .setPositiveButton("Close", null)
+                .show();
+    }
+
+    private void updateLiveNowPanel() {
+        List<Cricket.Match> live = liveMatchesForPanel();
+        liveNowList.removeAllViews();
+        if (live.isEmpty()) {
+            liveNowPanel.setVisibility(View.VISIBLE);
+            liveNowEmpty.setVisibility(View.VISIBLE);
+            liveNowScroll.setVisibility(View.GONE);
+            return;
+        }
+        liveNowEmpty.setVisibility(View.GONE);
+        liveNowScroll.setVisibility(View.VISIBLE);
+        liveNowPanel.setVisibility(View.VISIBLE);
+
+        for (final Cricket.Match match : live) {
+            LinearLayout card = new LinearLayout(this);
+            card.setOrientation(LinearLayout.VERTICAL);
+            card.setPadding(px(12), px(10), px(12), px(10));
+            LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(px(170), ViewGroup.LayoutParams.WRAP_CONTENT);
+            cardParams.setMargins(0, 0, px(8), 0);
+            card.setLayoutParams(cardParams);
+            card.setClickable(true);
+            card.setFocusable(true);
+            card.setBackground(createLiveCardBackground(false));
+            card.setOnClickListener(v -> showLiveMatchDetails(match));
+            card.setOnFocusChangeListener((v, hasFocus) -> {
+                GradientDrawable bg = createLiveCardBackground(hasFocus);
+                v.setBackground(bg);
+            });
+
+            TextView league = new TextView(this);
+            league.setText(match.football ? (match.league == null || match.league.isEmpty() ? "Football" : match.league)
+                    : (match.kind == null || match.kind.isEmpty() ? "Match" : match.kind));
+            league.setTextSize(10f);
+            league.setTextColor(0xFFFFA000);
+            league.setSingleLine(true);
+            league.setTypeface(Typeface.DEFAULT_BOLD);
+
+            TextView status = new TextView(this);
+            String statusText = match.football ? (match.status == null || match.status.isEmpty() ? "LIVE" : match.status)
+                    : (match.status == null || match.status.isEmpty() ? "LIVE" : match.status);
+            status.setText("LIVE · " + statusText);
+            status.setTextSize(9f);
+            status.setTextColor(0xFFB7C0CF);
+            status.setSingleLine(true);
+
+            TextView score = new TextView(this);
+            score.setText(liveMatchScore(match));
+            score.setTextSize(11f);
+            score.setTextColor(0xFFFFFFFF);
+            score.setSingleLine(false);
+            score.setMaxLines(2);
+
+            card.addView(league);
+            card.addView(status);
+            card.addView(score);
+            liveNowList.addView(card);
+        }
+    }
+
+    private GradientDrawable createLiveCardBackground(boolean focused) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(focused ? 0x33FFB861 : 0x1AFFFFFF);
+        bg.setCornerRadius(px(14));
+        bg.setStroke(px(1), focused ? 0x66FFB861 : 0x33FFFFFF);
+        return bg;
     }
 
     private void onMatches(List<Cricket.Match> list) {
@@ -728,8 +877,97 @@ public class HomeActivity extends Activity {
 
     private void onFootball(List<Cricket.Match> list) {
         footballMatches = list;
+        for (Cricket.Match m : list) {
+            if (!m.football) continue;
+            String prev = lastFootballScores.get(m.id);
+            String now = (m.s1 == null ? "0" : m.s1) + "-" + (m.s2 == null ? "0" : m.s2);
+            if (m.live && prev != null && !prev.equals(now)) {
+                int prevH = parseGoals(prev.split("-")[0]), prevA = parseGoals(prev.split("-")[1]);
+                int nowH = parseGoals(m.s1), nowA = parseGoals(m.s2);
+                if ((nowH > prevH || nowA > prevA) && (nowH > 0 || nowA > 0)) showGoalAlert(m);
+            }
+            String prevAlertState = lastFootballAlertStates.get(m.id);
+            String alertState = (m.status == null ? "" : m.status.trim()) + "|" + now;
+            if (m.live && isHalfTimeStatus(m.status) && !alertState.equals(prevAlertState)) {
+                showResultAlert(m, "HALF TIME", (m.short1.isEmpty() ? m.t1 : m.short1) + " " + m.s1 + "–" + m.s2 + " " + (m.short2.isEmpty() ? m.t2 : m.short2));
+            }
+            if (m.ended && isFullTimeStatus(m.status) && !alertState.equals(prevAlertState)) {
+                showResultAlert(m, "FULL TIME", (m.short1.isEmpty() ? m.t1 : m.short1) + " " + m.s1 + "–" + m.s2 + " " + (m.short2.isEmpty() ? m.t2 : m.short2));
+            }
+            lastFootballScores.put(m.id, now);
+            if (m.status != null && !m.status.trim().isEmpty()) lastFootballAlertStates.put(m.id, alertState);
+        }
         updateScore();
         showChannels(appChannels);  // while you're moving through the rows it waits for the remote to go still
+    }
+
+    private String goalNoteText(Cricket.Match m) {
+        if (m == null || !m.football || !m.live) return "";
+        int[] prev = new int[]{0, 0};
+        String last = lastFootballScores.get(m.id);
+        if (last != null) {
+            String[] score = last.split("-");
+            if (score.length == 2) {
+                prev[0] = parseGoals(score[0]);
+                prev[1] = parseGoals(score[1]);
+            }
+        }
+        int home = parseGoals(m.s1), away = parseGoals(m.s2);
+        String minute = (m.goalMinute == null || m.goalMinute.trim().isEmpty())
+                ? ((m.status == null || m.status.trim().isEmpty()) ? "25'" : m.status.trim())
+                : m.goalMinute.trim();
+        String scorer = m.scorer == null || m.scorer.trim().isEmpty() ? "" : m.scorer.trim();
+        if (!scorer.isEmpty()) return "GOAL • " + scorer + " " + minute;
+        String homeName = (m.short1 == null || m.short1.isEmpty()) ? m.t1 : m.short1;
+        String awayName = (m.short2 == null || m.short2.isEmpty()) ? m.t2 : m.short2;
+        if (home > prev[0]) return "GOAL • " + homeName + " " + minute;
+        if (away > prev[1]) return "GOAL • " + awayName + " " + minute;
+        return "GOAL • " + (home >= away ? homeName : awayName) + " " + minute;
+    }
+
+    private static int parseGoals(String value) {
+        try {
+            String clean = value == null ? "0" : value.trim();
+            if (clean.isEmpty()) return 0;
+            int slash = clean.indexOf('/');
+            if (slash >= 0) clean = clean.substring(0, slash);
+            int dash = clean.indexOf('-');
+            if (dash >= 0) clean = clean.substring(0, dash);
+            return Integer.parseInt(clean.replaceAll("[^0-9]", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private boolean isHalfTimeStatus(String status) {
+        if (status == null) return false;
+        String s = status.trim().toLowerCase(Locale.US);
+        return s.contains("half") || s.contains("ht") || s.contains("45+") || s.contains("45'");
+    }
+
+    private boolean isFullTimeStatus(String status) {
+        if (status == null) return false;
+        String s = status.trim().toLowerCase(Locale.US);
+        return s.contains("full time") || s.contains("full-time") || s.contains("ft") || s.contains("final") || s.contains("ended");
+    }
+
+    private void showGoalAlert(Cricket.Match m) {
+        showResultAlert(m, "GOAL", goalNoteText(m));
+    }
+
+    private void showResultAlert(Cricket.Match m, String label, String message) {
+        if (!liveScoreAlertEnabled()) return;
+        if (m == null || !m.football) return;
+        String leagueName = m.league == null || m.league.trim().isEmpty() ? m.kind : m.league;
+        FloatingAlertService.show(this, label, message, leagueName, m.img1, m.img2, m.leagueLogo);
+    }
+
+    private void loadBadge(ImageView target, String badgeUrl) {
+        background.execute(() -> {
+            File badgeFile = WatchNext.cached(this, new File(getExternalFilesDir(null), "cricket/flags"), badgeUrl, 64);
+            Bitmap badgeBitmap = badgeFile == null ? null : BitmapFactory.decodeFile(badgeFile.getPath());
+            if (badgeBitmap != null) runOnUiThread(() -> target.setImageBitmap(badgeBitmap));
+        });
     }
 
     private void onMinute() {
@@ -3490,6 +3728,22 @@ public class HomeActivity extends Activity {
             showChannels(appChannels);
             refreshOnline();
         }, true);
+        final View[] liveAlert = new View[1];
+        liveAlert[0] = addRow("Live score alert", liveScoreAlertEnabled() ? "On" : "Off", () -> {
+            boolean on = !liveScoreAlertEnabled();
+            prefs.edit().putBoolean("live_score_alert", on).apply();
+            setStatus(liveAlert[0], on ? "On" : "Off");
+            if (on) {
+                FloatingAlertService.activateLivePanel(this);
+            } else {
+                FloatingAlertService.hideLivePanel(this);
+                if (goalAlert != null) {
+                    try { getSystemService(WindowManager.class).removeView(goalAlert); } catch (RuntimeException ignored) {}
+                    goalAlert = null;
+                    goalAlertText = null;
+                }
+            }
+        }, true);
         if (!scores().equals("off") && !scores().equals("cricket")) addRow("Football leagues", football.leagues().size() + " on",
                 () -> openFootballLeagues(0), false);
         addRow("Channels", null, this::openChannelsEditor, false);
@@ -4617,6 +4871,9 @@ public class HomeActivity extends Activity {
         pressedHere = 0;
         SleepService.learn(null);
         inFront = false;
+        if (liveScoreAlertEnabled() && (scores().equals("both") || scores().equals("football"))) {
+            FloatingAlertService.checkBackground(this);
+        }
     }
 
     /**
